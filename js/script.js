@@ -34,6 +34,8 @@ $(document).ready(function () {
   //funzione che stampa i film dalla barra_ricerca
   //PARAMETRO: array di oggetti ritornato dall'api
   function stampa(arrayOggettiFilm) {
+    //prima camcello eventuali altre ricerche
+    $('ul.film').remove();
     var source = $('#lista-template').html();
     var template = Handlebars.compile(source);
     for (var i = 0; i < arrayOggettiFilm.length; i++) {
