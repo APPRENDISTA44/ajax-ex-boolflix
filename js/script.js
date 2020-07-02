@@ -18,8 +18,6 @@ $(document).ready(function () {
   });
 
 
-
-
   //FUNZIONI
 
   //funzione ricerca film
@@ -36,8 +34,6 @@ $(document).ready(function () {
     //ricerca delle serie tv
     ricercaContenuto(urlSeries,api_key,titolo)
   }
-
-
 
   //funzione ricerca film
    function ricercaContenuto(url,api_key,titolo) {
@@ -84,7 +80,9 @@ $(document).ready(function () {
         //trasformo lingua con bandiera corrispondente
         var bandiera = arrayOggettiFilm[i].original_language;
         bandiera = trasformaLingua(bandiera);
+
         var context = {
+          "copertina" : stampaCopertina(arrayOggettiFilm[i].poster_path),
           "title" : arrayOggettiFilm[i].title,
           "original_title" : arrayOggettiFilm[i].original_title,
           "original_language" : bandiera,
@@ -121,6 +119,7 @@ $(document).ready(function () {
         var bandiera = arrayOggettiSerie[i].original_language;
         bandiera = trasformaLingua(bandiera);
         var context = {
+          "copertina" : stampaCopertina(arrayOggettiSerie[i].poster_path),
           "title" : arrayOggettiSerie[i].name,
           "original_title" : arrayOggettiSerie[i].original_name,
           "original_language" : bandiera,
@@ -133,11 +132,6 @@ $(document).ready(function () {
     //pulisco la barra di ricerca
     $('#search').val('');
   }
-
-
-
-
-
 
   //messaggio in caso la ricerca non dia risultati
   function errore(messaggio) {
@@ -184,5 +178,10 @@ $(document).ready(function () {
         lingua = lingua;
     }
     return lingua;
+  }
+
+  function stampaCopertina(url){
+    var finalUrl = "https://image.tmdb.org/t/p/" + "w185" + url;
+    return finalUrl;
   }
 });

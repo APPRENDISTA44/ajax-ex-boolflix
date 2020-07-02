@@ -4,7 +4,10 @@
   padding: 0;
   box-sizing: border-box;
 }
-img{
+ul{
+  list-style: none;
+}
+.lingua img{
   height: 18px;
 }
 ul.film{

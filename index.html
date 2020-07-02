@@ -18,11 +18,13 @@
 
       </div>
     </div>
+    <img src="" alt="">
     <script id="lista-template" type="text/x-handlebars-template">
       <ul class="film">
+        <li class="copertina"><img src="{{{copertina}}}" alt="poster"></li>
         <li>Titolo: {{title}}</li>
         <li>Titolo in lingua originale: {{original_title}}</li>
-        <li>Lingua: {{{original_language}}}</li>
+        <li class="lingua">Lingua: {{{original_language}}}</li>
         <li>Voto: {{{vote_average}}}</li>
       </ul>
       </div>
