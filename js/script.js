@@ -26,6 +26,7 @@ $(document).ready(function () {
   //interrogo l'api per soddisfare la richiesta dell'utente
   //stampo i dati dei film trovati
   function ricerca(){
+    reset();
     var titolo = $('#search').val();
     $.ajax({
       url : "https://api.themoviedb.org/3/search/movie",
@@ -37,10 +38,14 @@ $(document).ready(function () {
       method : "GET",
       success : function (data) {
         console.log(data.results);
-        stampa(data.results);
+        if (data.results.length === 0) {
+          errore("la tua ricerca non ha prodotto risultati");
+        }else {
+          stampa(data.results);
+        }
       },
       error : function() {
-          alert("Si è verificato un errore");
+          errore("Si è verificato un errore");
       }
 
     });
@@ -50,8 +55,6 @@ $(document).ready(function () {
   //funzione di supporto che stampa i film dalla barra di ricerca
   //PARAMETRO: array di oggetti ritornato dall'api
   function stampa(arrayOggettiFilm) {
-    //prima camcello eventuali altre ricerche
-    $('ul.film').remove();
     var source = $('#lista-template').html();
     var template = Handlebars.compile(source);
     for (var i = 0; i < arrayOggettiFilm.length; i++) {
@@ -62,9 +65,24 @@ $(document).ready(function () {
         "vote_average" : arrayOggettiFilm[i].vote_average
       }
       var html = template(context);
-      $('.container').append(html);
+      $('#objects').append(html);
     }
     //pulisco la barra di ricerca
     $('#search').val('');
+  }
+  //messaggio in caso la ricerca non dia risultati
+  function errore(messaggio) {
+    var source = $('#errore-template').html();
+    var template = Handlebars.compile(source);
+    var context = {
+      "errore" : messaggio
+    }
+    var html = template(context);
+    $('#objects').append(html);
+  }
+
+  //pulisco i risultati precdenti
+  function reset() {
+    $('#objects').html('');
   }
 });
