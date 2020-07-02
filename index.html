@@ -18,12 +18,11 @@
 
       </div>
     </div>
-
     <script id="lista-template" type="text/x-handlebars-template">
       <ul class="film">
-        <li>{{title}}</li>
-        <li>{{original_title}}</li>
-        <li>{{original_language}}</li>
+        <li>Titolo: {{title}}</li>
+        <li>Titolo in lingua originale: {{original_title}}</li>
+        <li>Lingua: {{{original_language}}}</li>
         <li>Voto: {{{vote_average}}}</li>
       </ul>
       </div>
@@ -31,7 +30,9 @@
     <p></p>
     <script id="errore-template" type="text/x-handlebars-template">
       <p>{{errore}}</p>
-
+    </script>
+    <script id="tipologia-template" type="text/x-handlebars-template">
+      <h2 class="tipologia">{{tipo}}</h2>
     </script>
 
     <!-- codice js -->

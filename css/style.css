@@ -4,6 +4,9 @@
   padding: 0;
   box-sizing: border-box;
 }
+img{
+  height: 18px;
+}
 ul.film{
   margin: 50px;
 }

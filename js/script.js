@@ -28,51 +28,117 @@ $(document).ready(function () {
   function ricerca(){
     reset();
     var titolo = $('#search').val();
-    $.ajax({
-      url : "https://api.themoviedb.org/3/search/movie",
-      data : {
-        "api_key" : "d7eedefaa54e5ee2ac1df8e212654266",
-        "query" : titolo,
-        "language" : "it-IT"
-      },
-      method : "GET",
-      success : function (data) {
-        console.log(data.results);
-        if (data.results.length === 0) {
-          errore("la tua ricerca non ha prodotto risultati");
-        }else {
-          stampa(data.results);
-        }
-      },
-      error : function() {
-          errore("Si è verificato un errore");
-      }
-
-    });
+    var urlFilm = "https://api.themoviedb.org/3/search/movie";
+    var urlSeries = "https://api.themoviedb.org/3/search/tv";
+    var api_key = "d7eedefaa54e5ee2ac1df8e212654266";
+    //ricerca dei film
+    ricercaContenuto(urlFilm,api_key,titolo)
+    //ricerca delle serie tv
+    ricercaContenuto(urlSeries,api_key,titolo)
   }
 
 
+
+  //funzione ricerca film
+   function ricercaContenuto(url,api_key,titolo) {
+     $.ajax({
+       url : url,
+       data : {
+         "api_key" : api_key,
+         "query" : titolo,
+         "language" : "it-IT"
+       },
+       method : "GET",
+       success : function (data) {
+         console.log(data.results);
+         if (url.includes("search/movie")) {
+           stampaFilm(data.results);
+         }else if (url.includes("search/tv")) {
+           stampaSerieTV(data.results)
+         }
+       },
+       error : function() {
+           errore("Si è verificato un errore");
+       }
+     });
+   }
   //funzione di supporto che stampa i film dalla barra di ricerca
   //PARAMETRO: array di oggetti ritornato dall'api
-  function stampa(arrayOggettiFilm) {
-    var source = $('#lista-template').html();
+  function stampaFilm(arrayOggettiFilm) {
+    var source = $('#tipologia-template').html();
     var template = Handlebars.compile(source);
-    for (var i = 0; i < arrayOggettiFilm.length; i++) {
-      //trasfotmo prima il voto per visualizzare stelle
-      var voto = arrayOggettiFilm[i].vote_average;
-      voto = trasformaVoto(voto);
-      var context = {
-        "title" : arrayOggettiFilm[i].title,
-        "original_title" : arrayOggettiFilm[i].original_title,
-        "original_language" : arrayOggettiFilm[i].original_language,
-        "vote_average" : voto
-      };
-      var html = template(context);
-      $('#objects').append(html);
+    var tipologia = {"tipo" : "Film"};
+    var html = template(tipologia);
+    $('#objects').append(html);
+    if (arrayOggettiFilm.length === 0) {
+      errore("la ricerca non ha prodotto risultati nella sezione film");
+    }else {
+      var source = $('#lista-template').html();
+      var template = Handlebars.compile(source);
+      for (var i = 0; i < arrayOggettiFilm.length; i++) {
+
+        //trasfotmo prima il voto per visualizzare stelle
+        var voto = arrayOggettiFilm[i].vote_average;
+        voto = trasformaVoto(voto);
+
+        //trasformo lingua con bandiera corrispondente
+        var bandiera = arrayOggettiFilm[i].original_language;
+        bandiera = trasformaLingua(bandiera);
+        var context = {
+          "title" : arrayOggettiFilm[i].title,
+          "original_title" : arrayOggettiFilm[i].original_title,
+          "original_language" : bandiera,
+          "vote_average" : voto
+        };
+        var html = template(context);
+        $('#objects').append(html);
+      }
     }
     //pulisco la barra di ricerca
     $('#search').val('');
   }
+
+  //funzione di supporto che stampa le serie tv dalla barra di ricerca
+  //PARAMETRO: array di oggetti ritornato dall'api
+  function stampaSerieTV(arrayOggettiSerie) {
+    var source = $('#tipologia-template').html();
+    var template = Handlebars.compile(source);
+    var tipologia = {"tipo" : "Serie TV"};
+    var html = template(tipologia);
+    $('#objects').append(html);
+    if (arrayOggettiSerie.length === 0) {
+      errore("la ricerca non ha prodotto risultati nella sezione serie tv");
+    }else {
+      var source = $('#lista-template').html();
+      var template = Handlebars.compile(source);
+      for (var i = 0; i < arrayOggettiSerie.length; i++) {
+
+        //trasfotmo prima il voto per visualizzare stelle
+        var voto = arrayOggettiSerie[i].vote_average;
+        voto = trasformaVoto(voto);
+
+        //trasformo lingua con bandiera corrispondente
+        var bandiera = arrayOggettiSerie[i].original_language;
+        bandiera = trasformaLingua(bandiera);
+        var context = {
+          "title" : arrayOggettiSerie[i].name,
+          "original_title" : arrayOggettiSerie[i].original_name,
+          "original_language" : bandiera,
+          "vote_average" : voto
+        };
+        var html = template(context);
+        $('#objects').append(html);
+      }
+    }
+    //pulisco la barra di ricerca
+    $('#search').val('');
+  }
+
+
+
+
+
+
   //messaggio in caso la ricerca non dia risultati
   function errore(messaggio) {
     var source = $('#errore-template').html();
@@ -101,5 +167,22 @@ $(document).ready(function () {
       stelle += "<i class=\"far fa-star\"></i>";
     }
     return stelle;
+  }
+  //trasformo la lingua dell'oggetto da stringa a bandiera, se disponibile
+  function trasformaLingua(lingua) {
+    switch (lingua) {
+      case "it":
+        lingua = '<img src="https://cdn.countryflags.com/thumbs/italy/flag-3d-round-250.png" alt="it">'
+        break;
+      case "en":
+        lingua = '<img src="https://icons.iconarchive.com/icons/iconscity/flags/256/uk-icon.png" alt="en">'
+        break;
+      case "fr":
+        lingua = '<img src="https://cdn.countryflags.com/thumbs/france/flag-3d-round-250.png" alt="fr">'
+        break;
+      default:
+        lingua = lingua;
+    }
+    return lingua;
   }
 });
