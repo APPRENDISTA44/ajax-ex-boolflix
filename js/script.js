@@ -58,12 +58,15 @@ $(document).ready(function () {
     var source = $('#lista-template').html();
     var template = Handlebars.compile(source);
     for (var i = 0; i < arrayOggettiFilm.length; i++) {
+      //trasfotmo prima il voto per visualizzare stelle
+      var voto = arrayOggettiFilm[i].vote_average;
+      voto = trasformaVoto(voto);
       var context = {
         "title" : arrayOggettiFilm[i].title,
         "original_title" : arrayOggettiFilm[i].original_title,
         "original_language" : arrayOggettiFilm[i].original_language,
-        "vote_average" : arrayOggettiFilm[i].vote_average
-      }
+        "vote_average" : voto
+      };
       var html = template(context);
       $('#objects').append(html);
     }
@@ -84,5 +87,19 @@ $(document).ready(function () {
   //pulisco i risultati precdenti
   function reset() {
     $('#objects').html('');
+  }
+  //trasfotmo il voto decimale in una scala da 0 a 5 e ritorno le stelle corrispondenti
+  //PARAMETRO: voto in decimale
+  //RETURN: rappresentazione con stelle
+  function trasformaVoto(numero){
+    numero = Math.ceil(numero/2);
+    var stelle = '';
+    for (var i = 0; i < numero; i++) {
+      stelle += "<i class=\"fas fa-star\"></i>";
+    }
+    for (var i = 0; i < 5-numero; i++) {
+      stelle += "<i class=\"far fa-star\"></i>";
+    }
+    return stelle;
   }
 });
