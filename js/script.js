@@ -1,5 +1,7 @@
 $(document).ready(function () {
 
+  //EVENTI
+
   //evento di ricerca film al click del bottone
   $(document).on('click','#button_search',
   function () {
@@ -48,9 +50,9 @@ $(document).ready(function () {
        success : function (data) {
          console.log(data.results);
          if (url.includes("search/movie")) {
-           stampaFilm(data.results);
+           stampa(data.results,1);
          }else if (url.includes("search/tv")) {
-           stampaSerieTV(data.results)
+           stampa(data.results,2)
          }
        },
        error : function() {
@@ -58,80 +60,54 @@ $(document).ready(function () {
        }
      });
    }
+
+   //funzione di supporto che stampa i film e serie tvdalla barra di ricerca
+   //PARAMETRO: array di oggetti ritornato dall'api e numero che identifica se sto trattando film oppure serie tv
+   function stampa(arrayOggetti,numero) {
+     var source = $('#tipologia-template').html();
+     var template = Handlebars.compile(source);
+     var tipologia;
+     if (numero === 1) {
+       tipologia = {"tipo" : "Film"};
+     }else if (numero === 2) {
+       tipologia = {"tipo" : "Serie TV"};
+     }
+     var html = template(tipologia);
+     $('#objects').append(html);
+     if (arrayOggetti.length === 0) {
+       errore("la ricerca non ha prodotto risultati nella sezione " + tipologia.tipo);
+     }else {
+       var source = $('#lista-template').html();
+       var template = Handlebars.compile(source);
+       for (var i = 0; i < arrayOggetti.length; i++) {
+
+         //trasfotmo prima il voto per visualizzare stelle
+         var voto = trasformaVoto(arrayOggetti[i].vote_average);
+         //trasformo lingua con bandiera corrispondente
+         bandiera = trasformaLingua(arrayOggetti[i].original_language);
+         var context = {
+           "copertina" : stampaCopertina(arrayOggetti[i].poster_path),
+           "original_language" : bandiera,
+           "vote_average" : voto
+         };
+         if (numero === 0) {
+           context.title = arrayOggetti[i].title;
+           context.original_title = arrayOggetti[i].original_title;
+         }else if (numero === 1) {
+           context.title = arrayOggetti[i].name;
+           context.original_title = arrayOggetti[i].original_name;
+         }
+         var html = template(context);
+         $('#objects').append(html);
+       }
+     }
+     //pulisco la barra di ricerca
+     $('#search').val('');
+   }
   //funzione di supporto che stampa i film dalla barra di ricerca
   //PARAMETRO: array di oggetti ritornato dall'api
-  function stampaFilm(arrayOggettiFilm) {
-    var source = $('#tipologia-template').html();
-    var template = Handlebars.compile(source);
-    var tipologia = {"tipo" : "Film"};
-    var html = template(tipologia);
-    $('#objects').append(html);
-    if (arrayOggettiFilm.length === 0) {
-      errore("la ricerca non ha prodotto risultati nella sezione film");
-    }else {
-      var source = $('#lista-template').html();
-      var template = Handlebars.compile(source);
-      for (var i = 0; i < arrayOggettiFilm.length; i++) {
 
-        //trasfotmo prima il voto per visualizzare stelle
-        var voto = arrayOggettiFilm[i].vote_average;
-        voto = trasformaVoto(voto);
 
-        //trasformo lingua con bandiera corrispondente
-        var bandiera = arrayOggettiFilm[i].original_language;
-        bandiera = trasformaLingua(bandiera);
-
-        var context = {
-          "copertina" : stampaCopertina(arrayOggettiFilm[i].poster_path),
-          "title" : arrayOggettiFilm[i].title,
-          "original_title" : arrayOggettiFilm[i].original_title,
-          "original_language" : bandiera,
-          "vote_average" : voto
-        };
-        var html = template(context);
-        $('#objects').append(html);
-      }
-    }
-    //pulisco la barra di ricerca
-    $('#search').val('');
-  }
-
-  //funzione di supporto che stampa le serie tv dalla barra di ricerca
-  //PARAMETRO: array di oggetti ritornato dall'api
-  function stampaSerieTV(arrayOggettiSerie) {
-    var source = $('#tipologia-template').html();
-    var template = Handlebars.compile(source);
-    var tipologia = {"tipo" : "Serie TV"};
-    var html = template(tipologia);
-    $('#objects').append(html);
-    if (arrayOggettiSerie.length === 0) {
-      errore("la ricerca non ha prodotto risultati nella sezione serie tv");
-    }else {
-      var source = $('#lista-template').html();
-      var template = Handlebars.compile(source);
-      for (var i = 0; i < arrayOggettiSerie.length; i++) {
-
-        //trasfotmo prima il voto per visualizzare stelle
-        var voto = arrayOggettiSerie[i].vote_average;
-        voto = trasformaVoto(voto);
-
-        //trasformo lingua con bandiera corrispondente
-        var bandiera = arrayOggettiSerie[i].original_language;
-        bandiera = trasformaLingua(bandiera);
-        var context = {
-          "copertina" : stampaCopertina(arrayOggettiSerie[i].poster_path),
-          "title" : arrayOggettiSerie[i].name,
-          "original_title" : arrayOggettiSerie[i].original_name,
-          "original_language" : bandiera,
-          "vote_average" : voto
-        };
-        var html = template(context);
-        $('#objects').append(html);
-      }
-    }
-    //pulisco la barra di ricerca
-    $('#search').val('');
-  }
 
   //messaggio in caso la ricerca non dia risultati
   function errore(messaggio) {
