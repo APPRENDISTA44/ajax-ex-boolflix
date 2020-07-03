@@ -13,3 +13,27 @@ ul{
 ul.film{
   margin: 50px;
 }
+/*HEADER*/
+header{
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  color: red;
+  background-color: black;
+}
+header input{
+  height: 30px;
+  width: 200px
+}
+/*MAIN*/
+main{
+  height: calc(100vh - 100px);
+  background-color: grey;
+}
+.container{
+  height: 100%;
+  overflow: auto;
+  padding: 0 20px;
+}

@@ -11,14 +11,24 @@
     <title>Boolflix</title>
   </head>
   <body>
-    <div class="container">
+    <header>
+      <h1>BOOLFLIX</h1>
       <input id="search"type="text" placeholder="Cerca...">
-      <button id="button_search">Cerca</button>
-      <div id="objects">
+    </header>
+    <main>
+      <div class="container">
 
+        <h2>Film:</h2>
+        <div id="objectsFilm">
+
+        </div>
+        <h2>Serie TV:</h2>
+        <div id="objectsSerieTV">
+
+        </div>
       </div>
-    </div>
-    <img src="" alt="">
+    </main>
+
     <script id="lista-template" type="text/x-handlebars-template">
       <ul class="film">
         <li class="copertina"><img src="{{{copertina}}}" alt="poster"></li>

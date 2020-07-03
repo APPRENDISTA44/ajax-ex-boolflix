@@ -37,7 +37,7 @@ $(document).ready(function () {
     ricercaContenuto(urlSeries,api_key,titolo)
   }
 
-  //funzione ricerca film
+  //funzione ricerca con chiamata ajax
    function ricercaContenuto(url,api_key,titolo) {
      $.ajax({
        url : url,
@@ -66,15 +66,8 @@ $(document).ready(function () {
   //funzione di supporto che stampa i film e serie tv dalla barra di ricerca
   //PARAMETRO: array di oggetti ritornato dall'api e tipologia di contenuto
   function stampa(arrayOggetti,tipo) {
-    var source = $('#tipologia-template').html();
-    var template = Handlebars.compile(source);
-    var tipologia = {
-      "genere" : tipo
-    }
-    var html = template(tipologia);
-    $('#objects').append(html);
     if (arrayOggetti.length === 0) {
-      errore("la ricerca non ha prodotto risultati nella sezione" + tipo);
+      errore(tipo);
     }else {
       var source = $('#lista-template').html();
       var template = Handlebars.compile(source);
@@ -100,26 +93,35 @@ $(document).ready(function () {
           "vote_average" : voto
         };
         var html = template(context);
-        $('#objects').append(html);
+        if (tipo === "Film") {
+          $('#objectsFilm').append(html);
+        }else if (tipo === "Serie TV") {
+          $('#objectsSerieTV').append(html);
+        }
       }
     }
     //pulisco la barra di ricerca
     $('#search').val('');
   }
   //messaggio in caso la ricerca non dia risultati
-  function errore(messaggio) {
+  function errore(tipo) {
     var source = $('#errore-template').html();
     var template = Handlebars.compile(source);
     var context = {
-      "errore" : messaggio
+      "errore" : "la ricerca non ha prodotto risultati nella sezione " + tipo
     }
     var html = template(context);
-    $('#objects').append(html);
+    if (tipo === "Film") {
+      $('#objectsFilm').append(html);
+    }else if (tipo === "Serie TV") {
+      $('#objectsSerieTV').append(html);
+    }
   }
 
   //pulisco i risultati precdenti
   function reset() {
-    $('#objects').html('');
+    $('#objectsFilm').html('');
+    $('#objectsSerieTV').html('');
   }
   //trasfotmo il voto decimale in una scala da 0 a 5 e ritorno le stelle corrispondenti
   //PARAMETRO: voto in decimale
