@@ -51,11 +51,12 @@ main h2{
 }
 .contenuto .poster{
   position: relative;
-  width: fit-content;
-}
-.contenuto .poster img.locandina{
   height: 513px;
   width: 342px;
+}
+.contenuto .poster img.locandina{
+  height: 100%;
+  width: 100%;
 }
 .contenuto .poster:hover .descrizioneContenuto{
   display: block;
@@ -78,4 +79,7 @@ main h2{
 }
 .contenuto .poster .descrizioneContenuto li i{
   color: gold;
+}
+.container p{
+  margin-bottom: 30px;
 }
