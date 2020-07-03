@@ -38,6 +38,8 @@ $(document).ready(function () {
   }
 
   //funzione ricerca con chiamata ajax
+  //PARAMETRO: url del server da chiamare, chiave dell'api
+  //e stringa digitata dall'utente
    function ricercaContenuto(url,api_key,titolo) {
      $.ajax({
        url : url,
@@ -90,7 +92,8 @@ $(document).ready(function () {
           "title" : titolo,
           "original_title" : titolo_originale,
           "original_language" : bandiera,
-          "vote_average" : voto
+          "vote_average" : voto,
+          "overview" : arrayOggetti[i].overview
         };
         var html = template(context);
         if (tipo === "Film") {
@@ -104,6 +107,7 @@ $(document).ready(function () {
     $('#search').val('');
   }
   //messaggio in caso la ricerca non dia risultati
+  //PARAMETRO: tipo di contenuto, film o serie tv
   function errore(tipo) {
     var source = $('#errore-template').html();
     var template = Handlebars.compile(source);
@@ -138,6 +142,8 @@ $(document).ready(function () {
     return stelle;
   }
   //trasformo la lingua dell'oggetto da stringa a bandiera, se disponibile
+  //PARAMETRO: lingua originale del contenuto
+  //RETURN: immagine della bandiera se disponibile, altrimenti parametro immutato
   function trasformaLingua(lingua) {
     switch (lingua) {
       case "it":
@@ -154,9 +160,17 @@ $(document).ready(function () {
     }
     return lingua;
   }
-
+  //effettua controllo sulla copertina, se esiste crea url completo, altrimenti
+  //viene mostrata un'immagine di defaul
+  //PARAMETRO: parte finale dell'url dell'immagine
+  //RETURN: url immagine da mostrare
   function stampaCopertina(url){
-    var finalUrl = "https://image.tmdb.org/t/p/" + "w185" + url;
+    var finalUrl;
+    if (url === null) {
+      finalUrl = "https://static.vecteezy.com/system/resources/previews/000/440/467/non_2x/question-mark-vector-icon.jpg"
+    }else {
+      finalUrl = "https://image.tmdb.org/t/p/" + "w342" + url;
+    }
     return finalUrl;
   }
 });

@@ -7,14 +7,18 @@
     <script src="https://momentjs.com/downloads/moment.js"> </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.js"></script>
-
     <title>Boolflix</title>
   </head>
+
   <body>
+    <!-- inizio header -->
     <header>
       <h1>BOOLFLIX</h1>
-      <input id="search"type="text" placeholder="Cerca...">
+      <input id="search" type="text" placeholder="Cerca...">
     </header>
+    <!-- fine header -->
+
+    <!-- inizio main -->
     <main>
       <div class="container">
 
@@ -24,28 +28,32 @@
         </div>
         <h2>Serie TV:</h2>
         <div id="objectsSerieTV">
-
         </div>
       </div>
     </main>
+    <!-- inizio main -->
 
+
+    <!-- Template handlebars -->
     <script id="lista-template" type="text/x-handlebars-template">
-      <ul class="film">
-        <li class="copertina"><img src="{{{copertina}}}" alt="poster"></li>
-        <li>Titolo: {{title}}</li>
-        <li>Titolo in lingua originale: {{original_title}}</li>
-        <li class="lingua">Lingua: {{{original_language}}}</li>
-        <li>Voto: {{{vote_average}}}</li>
-      </ul>
+    <div class="contenuto">
+      <div class="poster">
+        <img class="locandina" src="{{{copertina}}}" alt="poster mancante">
+        <ul class="descrizioneContenuto">
+          <li class="copertina"></li>
+          <li><span>Titolo:</span> {{title}}</li>
+          <li><span>Titolo in lingua originale:</span> {{original_title}}</li>
+          <li class="lingua"><span>Lingua:</span> {{{original_language}}}</li>
+          <li><span>Voto:</span> {{{vote_average}}}</li>
+          <li class="overview"><span>Overview:</span> {{overview}} </li>
+        </ul>
       </div>
+    </div>
     </script>
-    <p></p>
     <script id="errore-template" type="text/x-handlebars-template">
       <p>{{errore}}</p>
     </script>
-    <script id="tipologia-template" type="text/x-handlebars-template">
-      <h2 class="tipologia">{{genere}}</h2>
-    </script>
+
 
     <!-- codice js -->
     <script type="text/javascript" src="js/script.js"></script>
