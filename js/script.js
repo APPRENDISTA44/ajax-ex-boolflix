@@ -49,10 +49,13 @@ $(document).ready(function () {
        method : "GET",
        success : function (data) {
          console.log(data.results);
-         if (url.includes("search/movie")) {
-           stampaFilm(data.results);
-         }else if (url.includes("search/tv")) {
-           stampaSerieTV(data.results)
+         var type;
+         if (url === "https://api.themoviedb.org/3/search/movie" ) {
+           type = "Film"
+           stampa(data.results,type);
+         }else if (url === "https://api.themoviedb.org/3/search/tv") {
+           type = "Serie TV"
+           stampa(data.results,type)
          }
        },
        error : function() {
@@ -60,30 +63,39 @@ $(document).ready(function () {
        }
      });
    }
-  //funzione di supporto che stampa i film dalla barra di ricerca
-  //PARAMETRO: array di oggetti ritornato dall'api
-  function stampaFilm(arrayOggettiFilm) {
+  //funzione di supporto che stampa i film e serie tv dalla barra di ricerca
+  //PARAMETRO: array di oggetti ritornato dall'api e tipologia di contenuto
+  function stampa(arrayOggetti,tipo) {
     var source = $('#tipologia-template').html();
     var template = Handlebars.compile(source);
-    var tipologia = {"tipo" : "Film"};
+    var tipologia = {
+      "genere" : tipo
+    }
     var html = template(tipologia);
     $('#objects').append(html);
-    if (arrayOggettiFilm.length === 0) {
-      errore("la ricerca non ha prodotto risultati nella sezione film");
+    if (arrayOggetti.length === 0) {
+      errore("la ricerca non ha prodotto risultati nella sezione" + tipo);
     }else {
       var source = $('#lista-template').html();
       var template = Handlebars.compile(source);
-      for (var i = 0; i < arrayOggettiFilm.length; i++) {
-
+      for (var i = 0; i < arrayOggetti.length; i++) {
         //trasfotmo prima il voto per visualizzare stelle
-        var voto = trasformaVoto(arrayOggettiFilm[i].vote_average);
+        var voto = trasformaVoto(arrayOggetti[i].vote_average);
         //trasformo lingua con bandiera corrispondente
-        bandiera = trasformaLingua(arrayOggettiFilm[i].original_language);
-
+        bandiera = trasformaLingua(arrayOggetti[i].original_language);
+        var titolo;
+        var titolo_originale;
+        if (tipo === "Film") {
+          titolo = arrayOggetti[i].title;
+          titolo_originale = arrayOggetti[i].original_title
+        }else if (tipo === "Serie TV") {
+          titolo = arrayOggetti[i].name;
+          titolo_originale = arrayOggetti[i].original_name
+        }
         var context = {
-          "copertina" : stampaCopertina(arrayOggettiFilm[i].poster_path),
-          "title" : arrayOggettiFilm[i].title,
-          "original_title" : arrayOggettiFilm[i].original_title,
+          "copertina" : stampaCopertina(arrayOggetti[i].poster_path),
+          "title" : titolo,
+          "original_title" : titolo_originale,
           "original_language" : bandiera,
           "vote_average" : voto
         };
@@ -94,40 +106,6 @@ $(document).ready(function () {
     //pulisco la barra di ricerca
     $('#search').val('');
   }
-
-  //funzione di supporto che stampa le serie tv dalla barra di ricerca
-  //PARAMETRO: array di oggetti ritornato dall'api
-  function stampaSerieTV(arrayOggettiSerie) {
-    var source = $('#tipologia-template').html();
-    var template = Handlebars.compile(source);
-    var tipologia = {"tipo" : "Serie TV"};
-    var html = template(tipologia);
-    $('#objects').append(html);
-    if (arrayOggettiSerie.length === 0) {
-      errore("la ricerca non ha prodotto risultati nella sezione serie tv");
-    }else {
-      var source = $('#lista-template').html();
-      var template = Handlebars.compile(source);
-      for (var i = 0; i < arrayOggettiSerie.length; i++) {
-        //trasfotmo prima il voto per visualizzare stelle
-        var voto = trasformaVoto(arrayOggettiSerie[i].vote_average);
-        //trasformo lingua con bandiera corrispondente
-        var bandiera = trasformaLingua(arrayOggettiSerie[i].original_language);
-        var context = {
-          "copertina" : stampaCopertina(arrayOggettiSerie[i].poster_path),
-          "title" : arrayOggettiSerie[i].name,
-          "original_title" : arrayOggettiSerie[i].original_name,
-          "original_language" : bandiera,
-          "vote_average" : voto
-        };
-        var html = template(context);
-        $('#objects').append(html);
-      }
-    }
-    //pulisco la barra di ricerca
-    $('#search').val('');
-  }
-
   //messaggio in caso la ricerca non dia risultati
   function errore(messaggio) {
     var source = $('#errore-template').html();
