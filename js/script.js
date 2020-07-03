@@ -138,20 +138,11 @@ $(document).ready(function () {
   //PARAMETRO: lingua originale del contenuto
   //RETURN: immagine della bandiera se disponibile, altrimenti parametro immutato
   function trasformaLingua(lingua) {
-    switch (lingua) {
-      case "it":
-        lingua = '<img src="https://cdn.countryflags.com/thumbs/italy/flag-3d-round-250.png" alt="it">'
-        break;
-      case "en":
-        lingua = '<img src="https://icons.iconarchive.com/icons/iconscity/flags/256/uk-icon.png" alt="en">'
-        break;
-      case "fr":
-        lingua = '<img src="https://cdn.countryflags.com/thumbs/france/flag-3d-round-250.png" alt="fr">'
-        break;
-      default:
-        lingua = lingua;
+    var contenitoreLingue = ["it","en","fr"]
+    if (contenitoreLingue.includes(lingua)) {
+      bandiera = '<img src="img/' + lingua + '.png" alt="' + lingua + '">';
     }
-    return lingua;
+    return bandiera;
   }
   //effettua controllo sulla copertina, se esiste crea url completo, altrimenti
   //viene mostrata un'immagine di defaul
