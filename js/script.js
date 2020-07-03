@@ -139,6 +139,7 @@ $(document).ready(function () {
   //RETURN: immagine della bandiera se disponibile, altrimenti parametro immutato
   function trasformaLingua(lingua) {
     var contenitoreLingue = ["it","en","fr"]
+    var bandiera = lingua;
     if (contenitoreLingue.includes(lingua)) {
       bandiera = '<img src="img/' + lingua + '.png" alt="' + lingua + '">';
     }
