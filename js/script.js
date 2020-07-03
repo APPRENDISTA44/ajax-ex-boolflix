@@ -32,15 +32,15 @@ $(document).ready(function () {
     var urlSeries = "https://api.themoviedb.org/3/search/tv";
     var api_key = "d7eedefaa54e5ee2ac1df8e212654266";
     //ricerca dei film
-    ricercaContenuto(urlFilm,api_key,titolo)
+    ricercaContenuto(urlFilm,api_key,titolo,"Film")
     //ricerca delle serie tv
-    ricercaContenuto(urlSeries,api_key,titolo)
+    ricercaContenuto(urlSeries,api_key,titolo,"Serie TV")
   }
 
   //funzione ricerca con chiamata ajax
   //PARAMETRO: url del server da chiamare, chiave dell'api
   //e stringa digitata dall'utente
-   function ricercaContenuto(url,api_key,titolo) {
+   function ricercaContenuto(url,api_key,titolo,type) {
      $.ajax({
        url : url,
        data : {
@@ -51,14 +51,7 @@ $(document).ready(function () {
        method : "GET",
        success : function (data) {
          console.log(data.results);
-         var type;
-         if (url === "https://api.themoviedb.org/3/search/movie" ) {
-           type = "Film"
-           stampa(data.results,type);
-         }else if (url === "https://api.themoviedb.org/3/search/tv") {
-           type = "Serie TV"
-           stampa(data.results,type)
-         }
+         stampa(data.results,type)
        },
        error : function() {
            errore("Si è verificato un errore");
