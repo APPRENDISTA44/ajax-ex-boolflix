@@ -50,8 +50,7 @@ $(document).ready(function () {
        },
        method : "GET",
        success : function (data) {
-         console.log(data.results);
-         stampa(data.results,type)
+         stampa(data.results,type,api_key)
        },
        error : function() {
            errore("Si è verificato un errore");
@@ -60,12 +59,10 @@ $(document).ready(function () {
    }
   //funzione di supporto che stampa i film e serie tv dalla barra di ricerca
   //PARAMETRO: array di oggetti ritornato dall'api e tipologia di contenuto
-  function stampa(arrayOggetti,tipo) {
+  function stampa(arrayOggetti,tipo,api_key) {
     if (arrayOggetti.length === 0) {
       errore(tipo);
     }else {
-      var source = $('#lista-template').html();
-      var template = Handlebars.compile(source);
       for (var i = 0; i < arrayOggetti.length; i++) {
         //trasfotmo prima il voto per visualizzare stelle
         var voto = trasformaVoto(arrayOggetti[i].vote_average);
@@ -73,6 +70,7 @@ $(document).ready(function () {
         bandiera = trasformaLingua(arrayOggetti[i].original_language);
         var titolo;
         var titolo_originale;
+        var id = arrayOggetti[i].id;
         if (tipo === "Film") {
           titolo = arrayOggetti[i].title;
           titolo_originale = arrayOggetti[i].original_title
@@ -88,17 +86,62 @@ $(document).ready(function () {
           "vote_average" : voto,
           "overview" : arrayOggetti[i].overview
         };
-        var html = template(context);
-        if (tipo === "Film") {
-          $('#objectsFilm').append(html);
-        }else if (tipo === "Serie TV") {
-          $('#objectsSerieTV').append(html);
-        }
+        aggiungiDettagliGeneri(id,tipo,api_key,context)
       }
     }
     //pulisco la barra di ricerca
     $('#search').val('');
   }
+
+    //funzione che aggiunge i generi dell'opera in esame
+    //PARAMETRI: id del contenuto in esame, tipo del contenuto in esame,
+    //api_key e oggetto context utile a handlebars
+  function aggiungiDettagliGeneri(id,type,api_key,context) {
+    var url;
+    if (type === "Film") {
+      url = 'https://api.themoviedb.org/3/movie/' + id;
+    }else if (type === "Serie TV") {
+      url = 'https://api.themoviedb.org/3/tv/' + id;
+    }
+    $.ajax({
+      url : url,
+      data : {
+        "api_key" : api_key,
+        "language" : "it-IT"
+      },
+      method : "GET",
+      success : function (data) {
+        var genres = [];
+        // console.log(data);
+        var arrayGeneri = data.genres;
+        for (var i = 0; i < arrayGeneri.length; i++) {
+         genres.push(arrayGeneri[i].name);
+        }
+
+        context.genres = genres;
+        var source = $('#lista-template').html();
+        var template = Handlebars.compile(source);
+        var html = template(context);
+        if (type === "Film") {
+          $('#objectsFilm').append(html);
+        }else if (type === "Serie TV") {
+          $('#objectsSerieTV').append(html);
+        }
+        console.log(context);
+
+      },
+      error : function() {
+          errore("Si è verificato un errore");
+      }
+    });
+  }
+
+
+
+
+
+
+
   //messaggio in caso la ricerca non dia risultati
   //PARAMETRO: tipo di contenuto, film o serie tv
   function errore(tipo) {

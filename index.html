@@ -45,6 +45,14 @@
           <li><span>Titolo in lingua originale:</span> {{original_title}}</li>
           <li class="lingua"><span>Lingua:</span> {{{original_language}}}</li>
           <li><span>Voto:</span> {{{vote_average}}}</li>
+          <li>
+            <ul class="genresList">
+              <li><span>Genres:</span></li>
+              {{#each genres}}
+              <li>{{this}}</li>
+              {{/each}}
+            </ul>
+          </li>
           <li class="overview"><span>Overview:</span> {{overview}} </li>
         </ul>
       </div>
