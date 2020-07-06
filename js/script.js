@@ -50,6 +50,7 @@ $(document).ready(function () {
        },
        method : "GET",
        success : function (data) {
+         console.log(data.results);
          stampa(data.results,type,api_key)
        },
        error : function() {
@@ -86,17 +87,18 @@ $(document).ready(function () {
           "vote_average" : voto,
           "overview" : arrayOggetti[i].overview
         };
-        aggiungiDettagliGeneri(id,tipo,api_key,context)
+        aggiungiDettagli(id,tipo,api_key,context)
       }
     }
     //pulisco la barra di ricerca
     $('#search').val('');
   }
 
-    //funzione che aggiunge i generi dell'opera in esame
-    //PARAMETRI: id del contenuto in esame, tipo del contenuto in esame,
-    //api_key e oggetto context utile a handlebars
-  function aggiungiDettagliGeneri(id,type,api_key,context) {
+  //funzione che aggiunge i generi dell'opera in esame e chiama funzione
+  //per trovare i primi 5 autori
+  //PARAMETRI: id del contenuto in esame, tipo del contenuto in esame,
+  //api_key e oggetto context utile a handlebars
+  function aggiungiDettagli(id,type,api_key,context) {
     var url;
     if (type === "Film") {
       url = 'https://api.themoviedb.org/3/movie/' + id;
@@ -117,8 +119,34 @@ $(document).ready(function () {
         for (var i = 0; i < arrayGeneri.length; i++) {
          genres.push(arrayGeneri[i].name);
         }
-
         context.genres = genres;
+        aggiungiDettagliAutori(url,api_key,context,type)
+      },
+      error : function() {
+          errore("Si è verificato un errore");
+      }
+    });
+  }
+
+  //funzione che trova i primi 5 autori e va a stampare contenuto completo
+  //PARAMETRI: url per chiamata ajax, api_key
+  //oggetto context utile a handlebars e tipo del contenuto in esame
+
+  function aggiungiDettagliAutori(url,api_key,context,type){
+    $.ajax({
+      url : url + '/credits',
+      data : {
+        "api_key" : api_key,
+        "language" : "it-IT"
+      },
+      method : "GET",
+      success : function (data) {
+        var actors = [];
+        var arrayAttori = data.cast;
+        for (var i = 0; i < 5 && i < arrayAttori.length ; i++) {
+          actors.push(arrayAttori[i].name)
+        }
+        context.actors = actors;
         var source = $('#lista-template').html();
         var template = Handlebars.compile(source);
         var html = template(context);
@@ -127,7 +155,6 @@ $(document).ready(function () {
         }else if (type === "Serie TV") {
           $('#objectsSerieTV').append(html);
         }
-        console.log(context);
 
       },
       error : function() {
@@ -135,8 +162,6 @@ $(document).ready(function () {
       }
     });
   }
-
-
 
 
 
